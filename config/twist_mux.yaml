@@ -1,0 +1,17 @@
+# hardware cmd vel topic: /base_controller/cmd_vel
+topics:
+- name    : joystic
+  topic   : joy_teleop/cmd_vel
+  timeout : 0.0
+  priority: 10
+  
+- name    : navigation
+  topic   : follow_path/cmd_vel
+  timeout : 0.5
+  priority: 100
+  
+locks:
+- name    : joystic
+  topic   : joy_priority
+  timeout : 0.0
+  priority: 100

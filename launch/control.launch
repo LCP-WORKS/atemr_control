@@ -1,0 +1,33 @@
+<launch>
+
+  <!-- Load controller configuration name="base_controller_spawner"-->
+  <rosparam command="load" file="$(find atemr_control)/config/controllers.yaml" />
+  <node name="base_controller_manager" pkg="controller_manager" type="spawner" ns="/"
+        args="joint_state_controller
+              base_controller"/>
+
+  <!-- EKF NODES -->
+  <rosparam command="load" file="$(find atemr_control)/config/robot_localization.yaml" />
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_odom">
+  </node>
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_map" clear_params="true">
+    <remap from="odometry/filtered" to="odometry/filtered_map"/>
+  </node>
+  
+  <node pkg="twist_mux" type="twist_mux" name="twist_mux">
+    <rosparam command="load" file="$(find atemr_control)/config/twist_mux.yaml" />
+    <remap from="cmd_vel_out" to="base_controller/cmd_vel"/>
+  </node>
+
+  <arg name="joy_dev" default="/dev/input/js0" />
+  <rosparam command="load" file="$(find atemr_control)/config/teleop.yaml" />
+
+  <node pkg="joy" type="joy_node" name="joy_node">
+    <param name="dev" value="$(arg joy_dev)" />
+  </node>
+
+  <node pkg="teleop_twist_joy" type="teleop_node" name="teleop_twist_joy">
+    <remap from="joy_teleop/cmd_vel" to="cmd_vel"/>
+  </node>
+
+</launch>
