@@ -16,7 +16,7 @@
     <param name="use_imu" value="true"/>
     <param name="use_odom" value="true"/>
     <param name="max_iterations" value="12"/>
-    <remap from="/scan" to="/laser/scan_merged"/>
+    <remap from="/scan" to="/laser/scan"/>
     <remap from="/imu/data" to="/gps_imu/data"/>
     <remap from="/odom" to="/base_controller/odom"/>
   </node>

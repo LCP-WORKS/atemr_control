@@ -1,6 +1,6 @@
 # hardware cmd vel topic: /base_controller/cmd_vel
 topics:
-- name    : joystic
+- name    : joystick
   topic   : joy_teleop/cmd_vel
   timeout : 0.0
   priority: 10
@@ -11,7 +11,7 @@ topics:
   priority: 100
   
 locks:
-- name    : joystic
+- name    : joystick
   topic   : joy_priority
   timeout : 0.0
   priority: 100

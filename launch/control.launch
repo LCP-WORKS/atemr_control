@@ -7,12 +7,12 @@
               base_controller"/>
 
   <!-- EKF NODES -->
-  <rosparam command="load" file="$(find atemr_control)/config/robot_localization.yaml" />
+  <!--rosparam command="load" file="$(find atemr_control)/config/robot_localization.yaml" />
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_odom">
   </node>
   <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_map" clear_params="true">
     <remap from="odometry/filtered" to="odometry/filtered_map"/>
-  </node>
+  </node-->
   
   <node pkg="twist_mux" type="twist_mux" name="twist_mux">
     <rosparam command="load" file="$(find atemr_control)/config/twist_mux.yaml" />
