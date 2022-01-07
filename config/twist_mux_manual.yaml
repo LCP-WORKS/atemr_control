@@ -3,15 +3,15 @@ topics:
 - name    : keyboard
   topic   : keyboard/cmd_vel
   timeout : 0.3
-  priority: 100
-  
-- name    : navigation
-  topic   : follow_path/cmd_vel
-  timeout : 0.5
-  priority: 10
+  priority: 50
+
+- name    : web_joy
+  topic   : web_joy/cmd_vel
+  timeout : 0.3
+  priority: 50
   
 locks:
 - name    : operator_system
-  topic   : operator_priority
+  topic   : manual_lock
   timeout : 0.0
   priority: 100

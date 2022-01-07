@@ -1,0 +1,12 @@
+# hardware cmd vel topic: /base_controller/cmd_vel
+topics: 
+- name    : navigation
+  topic   : follow_path/cmd_vel
+  timeout : 0.5
+  priority: 50
+  
+locks:
+- name    : operator_system
+  topic   : auto_lock
+  timeout : 0.0
+  priority: 100
