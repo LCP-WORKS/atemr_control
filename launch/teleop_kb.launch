@@ -8,8 +8,8 @@
     <!--param name="key_timeout" value="0.5"/>
   </node-->
 
-  <node pkg="atemr_hardware" type="key_publisher.py" name="keyboard" output="screen"/>
-  <node pkg="atemr_hardware" type="keys_to_twist_ramped_vel.py" name="keyboard_translator" output="screen">
+  <node pkg="atemr_control" type="key_publisher.py" name="keyboard" output="screen"/>
+  <node pkg="atemr_control" type="keys_to_twist_ramped_vel.py" name="keyboard_translator" output="screen">
     <param name="angular_scale" value="0.5"/>
     <param name="linear_scale" value="0.8"/>
     <param name="angular_accel" value="0.25"/>

@@ -1,4 +1,4 @@
-# hardware cmd vel topic: /base_controller/cmd_vel
+# automode cmd vel topic: /follow_path/cmd_vel
 topics: 
 - name    : navigation
   topic   : follow_path/cmd_vel

@@ -1,4 +1,4 @@
-# hardware cmd vel topic: /base_controller/cmd_vel
+# manualmode cmd vel topics: /keyboard/cmd_vel /web_joy/cmd_vel
 topics:
 - name    : keyboard
   topic   : keyboard/cmd_vel

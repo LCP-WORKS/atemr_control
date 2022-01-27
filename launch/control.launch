@@ -1,27 +1,40 @@
 <?xml version="1.0"?>
 <launch>
-
+  <arg name="live_run" default="false"/>
   <!-- Load controller configuration name="base_controller_spawner"-->
-  <rosparam command="load" file="$(find atemr_control)/config/controllers.yaml" />
-  <node name="base_controller_manager" pkg="controller_manager" type="spawner" ns="/"
+  <group if="$(arg live_run)">
+    <rosparam command="load" file="$(find atemr_control)/config/controllers.yaml" />
+    <node name="base_controller_manager" pkg="controller_manager" type="spawner" ns="/"
         args="joint_state_controller
               base_controller"/>
+  </group>
+  <group unless="$(arg live_run)">
+    <rosparam command="load" file="$(find atemr_control)/config/controllers_sim.yaml" />
+  </group>
 
-  <!-- EKF NODES -->
-  <!--rosparam command="load" file="$(find atemr_control)/config/robot_localization.yaml" />
-    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_odom">
-  </node>
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_map" clear_params="true">
-    <remap from="odometry/filtered" to="odometry/filtered_map"/>
-  </node-->
+  <!-- Run sensor fusion -->
+  <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time" value="2"/>
+    <arg name="pkg" value="atemr_localization"/>
+    <arg name="file" value="rloc_odom.launch"/> <!-- rloc_full -->
+  </include>
   
-  <node pkg="twist_mux" type="twist_mux" name="twist_mux_auto">
+  <!-- Run Velocity Mux -->
+  <node pkg="twist_mux" type="twist_mux" name="twist_mux_auto" respawn="true">
     <rosparam command="load" file="$(find atemr_control)/config/twist_mux_auto.yaml" />
-    <remap from="cmd_vel_out" to="base_controller/cmd_vel"/>
+    <remap from="cmd_vel_out" to="tmux/cmd_vel"/>
   </node>
-  <node pkg="twist_mux" type="twist_mux" name="twist_mux_manual">
+  <node pkg="twist_mux" type="twist_mux" name="twist_mux_manual" respawn="true">
     <rosparam command="load" file="$(find atemr_control)/config/twist_mux_manual.yaml" />
-    <remap from="cmd_vel_out" to="base_controller/cmd_vel"/>
+    <remap from="cmd_vel_out" to="tmux/cmd_vel"/>
+  </node>
+
+  <!-- Run Speed Ramp -->
+  <node pkg="atemr_control" type="speed_ramp.py" name="speed_ramp_node" respawn="true" output="screen">
+    <param name="angular_scale" value="1.0"/> <!-- 100% -->
+    <param name="linear_scale" value="1.0"/> <!-- 100% -->
+    <param name="angular_accel" value="0.65"/>
+    <param name="linear_accel" value="0.45"/>
   </node>
 
   <!--arg name="joy_dev" default="/dev/input/js0" />
