@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Run Speed Ramp -->
+  <node pkg="atemr_control" type="speed_ramp.py" name="speed_ramp_node" output="screen">
+    <param name="angular_scale" value="1.0"/> <!-- 100% -->
+    <param name="linear_scale" value="1.0"/> <!-- 100% -->
+    <param name="angular_accel" value="1.95"/>
+    <param name="linear_accel" value="1.85"/>
+    <param name="obstacle_stop_distance" value="0.28"/>
+    <param name="obstacle_slow_distance" value="0.56"/>
+    <param name="approach_linear_velocity" value="0.35"/>
+    <param name="approach_angular_velocity" value="0.6"/>
+    <param name="time_to_idle" value="8.0"/>
+  </node>
+
+</launch>
