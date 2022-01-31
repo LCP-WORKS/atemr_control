@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="live_run" default="false"/>
+  <arg name="live_run" default="true"/>
   <!-- Load controller configuration name="base_controller_spawner"-->
   <group if="$(arg live_run)">
     <rosparam command="load" file="$(find atemr_control)/config/controllers.yaml" />
