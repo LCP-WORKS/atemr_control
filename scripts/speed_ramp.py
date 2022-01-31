@@ -94,6 +94,8 @@ class SpeedRamp:
         self.last_twist = self.ramped_twist(t_now)
         self.last_twist_send_time = t_now
         self.output_vel_pub.publish(self.last_twist)
+        self.target_twist.angular.z = 0.0
+        self.target_twist.linear.x = 0.0
         
         #IDLE/ RUNNING detector
         if((abs(self.last_twist.angular.z) <= 0.0) and (abs(self.last_twist.linear.x) <= 0.0)):
