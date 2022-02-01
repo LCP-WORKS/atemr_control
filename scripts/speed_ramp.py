@@ -105,13 +105,6 @@ class SpeedRamp:
         return tw
 
     def execute(self):
-        t_now = rospy.Time.now()
-        self.last_twist = self.ramped_twist(t_now)
-        self.last_twist_send_time = t_now
-        self.output_vel_pub.publish(self.last_twist)
-        self.target_twist.angular.z = 0.0
-        self.target_twist.linear.x = 0.0
-        
         #IDLE/ RUNNING detector
         if((abs(self.last_twist.angular.z) <= 0.0) and (abs(self.last_twist.linear.x) <= 0.0)):
             if((not self.idle_timer)):
@@ -148,6 +141,10 @@ class SpeedRamp:
         if((not self.slow_down) and (not self.obs_emergency)):
             self.target_twist.angular.z = msg.angular.z * self.vel_scales[0]
             self.target_twist.linear.x = msg.linear.x * self.vel_scales[1]
+        t_now = rospy.Time.now()
+        self.last_twist = self.ramped_twist(t_now)
+        self.last_twist_send_time = t_now
+        self.output_vel_pub.publish(self.last_twist)
 
     def fetch_param(self, name, default):
         if (rospy.has_param(name)):
