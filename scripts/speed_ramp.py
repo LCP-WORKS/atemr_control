@@ -4,14 +4,14 @@ import rospy
 import math
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32MultiArray
-from atemr_msgs.srv import RobotAwareness, RobotAwarenessResponse
+from atemr_msgs.srv import SpeedRampService, SpeedRampServiceResponse
 from atemr_msgs.msg import SpeedRampStatus
 
 
 class SpeedRamp:
     def __init__(self, tmux_vel_topic="tmux/cmd_vel", reactive_vel_topic="reactive/cmd_vel", out_vel_topic="base_controller/cmd_vel"):
         self.last_twist_send_time = self.twist_idle_time = rospy.Time.now()
-        self.awareness_srvr = rospy.Service('RobotAwarenessServer', RobotAwareness, self.awareness_cb)
+        self.awareness_srvr = rospy.Service('SpeedRampServer', SpeedRampService, self.speedramp_cb)
         self.output_vel_pub = rospy.Publisher(out_vel_topic, Twist, queue_size=1)
 
         self.use_reactive_input = False
@@ -23,6 +23,9 @@ class SpeedRamp:
         self.is_idle = True
         self.OBSTACLE_STOP_DISTANCE = self.fetch_param('~obstacle_stop_distance', 0.28) #28cm
         self.OBSTACLE_SLOW_DISTANCE = self.fetch_param('~obstacle_slow_distance', 0.56) #56cm
+        self.bak_OBSTACLE_STOP_DISTANCE = self.OBSTACLE_STOP_DISTANCE #save defaults
+        self.bak_OBSTACLE_SLOW_DISTANCE = self.OBSTACLE_SLOW_DISTANCE
+
         self.APPROACH_LINEAR_VELOCITY = self.fetch_param('~approach_linear_velocity', 0.35) #m/s
         self.APPROACH_ANGULAR_VELOCITY = self.fetch_param('~approach_angular_velocity', 0.6) #rad/s
         self.RATE_IDLE_TIME = self.fetch_param('~time_to_idle', 8.0) #secs
@@ -58,17 +61,29 @@ class SpeedRamp:
             if(not self.obs_emergency and (not self.slow_down)):
                 self.slow_down = True #activate slow down
     
-    def awareness_cb(self, req):
-        if(not self.use_reactive_input and req.set_awareness.data): #if switching from RAW manual to REACTIVE manual control
-            self.tmux_sub.unregister()
-            self.reactive_sub = rospy.Subscriber(self.reactive_vel_topic, Twist, self.speed_cb)
-        if(self.use_reactive_input and not req.set_awareness.data): # if switching from REACTIVE manual to RAW manual control
-            self.reactive_sub.unregister()
-            self.tmux_sub = rospy.Subscriber(self.tmux_vel_topic, Twist, self.speed_cb)
+    def speedramp_cb(self, req):
+        if (req.is_awareness_cmd.data):
+            if(not self.use_reactive_input and req.set_awareness.data): #if switching from RAW manual to REACTIVE manual control
+                self.tmux_sub.unregister()
+                self.reactive_sub = rospy.Subscriber(self.reactive_vel_topic, Twist, self.speed_cb)
+            if(self.use_reactive_input and not req.set_awareness.data): # if switching from REACTIVE manual to RAW manual control
+                self.reactive_sub.unregister()
+                self.tmux_sub = rospy.Subscriber(self.tmux_vel_topic, Twist, self.speed_cb)
+            self.use_reactive_input = req.set_awareness.data
+        
+        if(req.is_stop_dist_cmd.data):
+            self.OBSTACLE_STOP_DISTANCE = req.stop_distance
+        
+        if(req.is_slow_dist_cmd.data):
+            self.OBSTACLE_SLOW_DISTANCE = req.slow_distance
+        
+        if(req.restore_distances.data):
+            self.OBSTACLE_STOP_DISTANCE = self.bak_OBSTACLE_STOP_DISTANCE
+            self.OBSTACLE_SLOW_DISTANCE = self.bak_OBSTACLE_SLOW_DISTANCE
+        
 
-        self.use_reactive_input = req.set_awareness.data
         #print('Awareness is: ', self.use_reactive_input)
-        res = RobotAwarenessResponse()
+        res = SpeedRampServiceResponse()
         res.status.data = True
         return res
 
