@@ -33,7 +33,7 @@
   <node pkg="atemr_control" type="speed_ramp.py" name="speed_ramp_node" respawn="true" output="screen">
     <param name="angular_scale" value="1.0"/> <!-- 100% -->
     <param name="linear_scale" value="1.0"/> <!-- 100% -->
-    <param name="angular_accel" value="3.85"/>
+    <param name="angular_accel" value="2.0"/>
     <param name="linear_accel" value="2.85"/>
     <param name="obstacle_stop_distance" value="0.28"/>
     <param name="obstacle_slow_distance" value="0.56"/>
