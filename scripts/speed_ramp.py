@@ -37,7 +37,6 @@ class SpeedRamp:
 
         self.target_twist = Twist()
         self.last_twist = Twist()
-        self.prev_t_now = rospy.Time.now()
         self.vel_scales = [0.1] * 2
         self.vel_scales[0] = self.fetch_param('~angular_scale', 0.1) # default to very slow
         self.vel_scales[1] = self.fetch_param('~linear_scale', 0.1)
@@ -143,11 +142,13 @@ class SpeedRamp:
             self.target_twist.angular.z = msg.angular.z * self.vel_scales[0]
             self.target_twist.linear.x = msg.linear.x * self.vel_scales[1]
         t_now = rospy.Time.now()
-        if((t_now.to_sec() - self.prev_t_now.to_sec()) >= 0.1):
+        if((t_now.to_sec() - self.last_twist_send_time.to_sec()) >= 0.1):
             self.last_twist.angular.z = self.last_twist.linear.x = 0.0
+            self.last_twist_send_time = t_now
         self.last_twist = self.ramped_twist(t_now)
         self.last_twist_send_time = t_now
         self.output_vel_pub.publish(self.last_twist)
+        self.prev_t_now = t_now
 
     def fetch_param(self, name, default):
         if (rospy.has_param(name)):
