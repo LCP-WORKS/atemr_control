@@ -13,11 +13,11 @@
   </group>
 
   <!-- Run sensor fusion -->
-  <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+  <!--include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
     <arg name="time" value="2"/>
     <arg name="pkg" value="atemr_localization"/>
-    <arg name="file" value="rloc_full.launch"/> <!-- rloc_full -->
-  </include>
+    <arg name="file" value="rloc_odom.launch"/>
+  </include-->
   
   <!-- Run Velocity Mux -->
   <node pkg="twist_mux" type="twist_mux" name="twist_mux_auto" respawn="true">
